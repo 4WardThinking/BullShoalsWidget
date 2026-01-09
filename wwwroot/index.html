@@ -21,19 +21,17 @@
       --shadow2: 0 8px 24px rgba(0,0,0,.35);
     }
 
-    /* Transparent body so it can sit on any site background */
+    /* Transparent body */
     body{
       margin:0;
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       color: var(--text);
 
-      /* Standalone readability */
       min-height: 100vh;
       display: grid;
       place-items: start center;
       padding: 18px;
 
-      /* A subtle background so glass is readable when viewed directly */
       background:
         radial-gradient(1200px 600px at 20% 10%, rgba(56,189,248,.22), transparent 60%),
         radial-gradient(900px 500px at 80% 0%, rgba(34,197,94,.14), transparent 55%),
@@ -64,7 +62,6 @@
       overflow: hidden;
     }
 
-    /* subtle highlight */
     .card:before{
       content:"";
       position:absolute;
@@ -76,7 +73,6 @@
       filter: blur(0px);
     }
 
-    /* header */
     .top{
       display:flex;
       justify-content: space-between;
@@ -121,7 +117,6 @@
       box-shadow: 0 0 0 3px rgba(34,197,94,.18);
     }
 
-    /* content */
     .content{
       padding: 0 14px 14px;
     }
@@ -281,7 +276,6 @@
       font-weight: 650;
     }
 
-    /* Optional: light theme if the host page is light */
     @media (prefers-color-scheme: light){
       :root{
         --card: rgba(0,0,0,.03);
@@ -315,7 +309,6 @@
       </div>
 
       <div class="content" id="content" hidden>
-        <!-- Hero lake level -->
         <div class="hero">
           <div>
             <div class="label">Lake level</div>
@@ -327,7 +320,6 @@
           <div class="trendPill flat" id="lakeTrend">• 0.00 ft</div>
         </div>
 
-        <!-- Grid stats -->
         <div class="grid">
           <div class="stat">
             <div class="k">Tailwater</div>
@@ -348,7 +340,6 @@
           </div>
         </div>
 
-        <!-- Weather -->
         <div class="weather">
           <div class="wxLeft">
             <div class="wxTop">
@@ -421,8 +412,8 @@
         const tt = trend(d.tailwaterFt.delta);
         document.getElementById("tailTrendText").textContent = `${tt.sym} ${fmtDelta(d.tailwaterFt.delta)}`;
 
-        // Times in the “Last update” stat
-        document.getElementById("lastUpdate").textContent = d.tailwaterFt.current.timeCentral.split(" ")[1]; // HH:mm
+        // “Last update” stat
+        document.getElementById("lastUpdate").textContent = d.tailwaterFt.current.timeCentral.split(" ")[1];
         document.getElementById("prevUpdate").textContent = d.tailwaterFt.previous.timeCentral.split(" ")[1];
 
         // Weather
@@ -444,7 +435,6 @@
 
         document.getElementById("wxDetails").textContent = parts.length ? parts.join(" • ") : "";
 
-        // Show
         state.hidden = true;
         content.hidden = false;
         badgeText.textContent = "Live";
