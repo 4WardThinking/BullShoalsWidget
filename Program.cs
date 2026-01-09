@@ -201,9 +201,7 @@ sealed class NwsClient(HttpClient http)
 {
     private static double? ParseFirstNumber(string s)
     {
-        // Extract first number in strings like "5 mph" or "10 to 15 mph"
         var digits = new string(s.TakeWhile(c => !char.IsDigit(c)).ToArray());
-        // (Oops, easier to do a simple scan)
         double? first = null;
         var token = "";
         foreach (var ch in s)
@@ -260,7 +258,6 @@ sealed class NwsClient(HttpClient http)
         double? windMph = null;
         if (first.TryGetProperty("windSpeed", out var ws))
         {
-            // windSpeed is often like "5 mph" or "10 to 15 mph"
             var s = ws.GetString() ?? "";
             windMph = ParseFirstNumber(s);
         }
