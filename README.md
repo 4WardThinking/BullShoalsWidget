@@ -24,11 +24,12 @@ Then open:
 ## Embed on your website:
 ```
 <iframe
-  src="https://levels.fourwardcast.com/"
+  src="https://levels.fourwardcast.com/?embed=1"
   width="420"
-  height="320"
-  style="border:0;border-radius:18px;overflow:hidden"
+  height="380"
   loading="lazy"
-  title="Bull Shoals Widget">
+  scrolling="no"
+  frameborder="0"
+  title="Bull Shoals Lake Levels">
 </iframe>
 ```
