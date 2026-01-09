@@ -1,0 +1,422 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Bull Shoals Widget</title>
+  <style>
+    :root{
+      --bg: #0b1220;
+      --card: rgba(255,255,255,.08);
+      --border: rgba(255,255,255,.14);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.65);
+      --muted2: rgba(255,255,255,.45);
+
+      --up: #22c55e;
+      --down: #fb7185;
+      --flat: #94a3b8;
+
+      --shadow: 0 18px 60px rgba(0,0,0,.45);
+      --shadow2: 0 8px 24px rgba(0,0,0,.35);
+    }
+
+    /* Transparent body so it can sit on any site background */
+    body{
+      margin:0;
+      background: transparent;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--text);
+    }
+
+    .wrap{
+      width: 100%;
+      max-width: 420px;
+      padding: 12px;
+      box-sizing: border-box;
+    }
+
+    .card{
+      position: relative;
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    /* subtle highlight */
+    .card:before{
+      content:"";
+      position:absolute;
+      inset:-120px -120px auto auto;
+      width: 260px;
+      height: 260px;
+      background: radial-gradient(circle at 30% 30%, rgba(56,189,248,.22), transparent 60%);
+      pointer-events:none;
+      filter: blur(0px);
+    }
+
+    /* header */
+    .top{
+      display:flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 14px 10px;
+      align-items:flex-start;
+    }
+
+    .title{
+      font-weight: 850;
+      letter-spacing: .2px;
+      font-size: 16px;
+      line-height: 1.15;
+    }
+
+    .asof{
+      margin-top: 4px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,.18);
+      box-shadow: var(--shadow2);
+      font-size: 12px;
+      color: var(--muted);
+      white-space: nowrap;
+      user-select:none;
+    }
+
+    .dot{
+      width: 8px;
+      height: 8px;
+      border-radius: 99px;
+      background: var(--up);
+      box-shadow: 0 0 0 3px rgba(34,197,94,.18);
+    }
+
+    /* content */
+    .content{
+      padding: 0 14px 14px;
+    }
+
+    .hero{
+      display:flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items:flex-end;
+      padding: 10px 0 14px;
+    }
+
+    .hero .label{
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 650;
+      letter-spacing: .2px;
+    }
+
+    .big{
+      font-size: 40px;
+      font-weight: 900;
+      letter-spacing: -0.8px;
+      line-height: 1;
+    }
+
+    .unit{
+      font-size: 14px;
+      color: var(--muted);
+      font-weight: 700;
+      margin-left: 6px;
+    }
+
+    .trendPill{
+      display:inline-flex;
+      align-items:center;
+      gap: 6px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 800;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,.20);
+      user-select:none;
+      min-width: 92px;
+      justify-content:center;
+    }
+
+    .trendPill.up{ color: var(--up); }
+    .trendPill.down{ color: var(--down); }
+    .trendPill.flat{ color: var(--flat); }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
+    }
+
+    .stat{
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,.14);
+      border-radius: 14px;
+      padding: 10px 10px 9px;
+    }
+
+    .stat .k{
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 650;
+      letter-spacing: .2px;
+    }
+
+    .stat .v{
+      margin-top: 6px;
+      font-weight: 900;
+      font-size: 18px;
+      letter-spacing: -0.2px;
+    }
+
+    .sub{
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--muted2);
+      font-weight: 650;
+      display:flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .weather{
+      margin-top: 10px;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,.14);
+      border-radius: 14px;
+      padding: 10px 10px 9px;
+      display:flex;
+      justify-content: space-between;
+      align-items:flex-start;
+      gap: 12px;
+    }
+
+    .wxLeft{
+      min-width: 0;
+    }
+
+    .wxTop{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+    }
+
+    .wxIcon{
+      font-size: 18px;
+      line-height: 1;
+      filter: drop-shadow(0 6px 12px rgba(0,0,0,.35));
+    }
+
+    .wxTemp{
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: -0.2px;
+    }
+
+    .wxSummary{
+      margin-top: 4px;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 650;
+      max-width: 270px;
+      overflow:hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .footer{
+      margin-top: 10px;
+      font-size: 11px;
+      color: var(--muted2);
+      display:flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .footer a{ color: inherit; text-decoration:none; }
+    .footer a:hover{ text-decoration: underline; }
+
+    /* error/loading */
+    .state{
+      padding: 12px 14px 14px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    /* Optional: light theme if the host page is light */
+    @media (prefers-color-scheme: light){
+      :root{
+        --card: rgba(0,0,0,.03);
+        --border: rgba(0,0,0,.10);
+        --text: rgba(15,23,42,.96);
+        --muted: rgba(15,23,42,.64);
+        --muted2: rgba(15,23,42,.45);
+        --shadow: 0 18px 60px rgba(2,6,23,.12);
+        --shadow2: 0 8px 24px rgba(2,6,23,.10);
+      }
+      .card{
+        background: linear-gradient(180deg, rgba(255,255,255,1), rgba(248,250,252,1));
+      }
+      .badge, .stat, .weather{ background: rgba(255,255,255,.70); }
+      .dot{ box-shadow: 0 0 0 3px rgba(34,197,94,.16); }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card" role="group" aria-label="Bull Shoals lake and tailwater levels">
+      <div class="top">
+        <div>
+          <div class="title">Bull Shoals</div>
+          <div class="asof" id="asof">Loading…</div>
+        </div>
+        <div class="badge" id="badge">
+          <span class="dot" aria-hidden="true"></span>
+          <span id="badgeText">Live</span>
+        </div>
+      </div>
+
+      <div class="content" id="content" hidden>
+        <!-- Hero lake level -->
+        <div class="hero">
+          <div>
+            <div class="label">Lake level</div>
+            <div>
+              <span class="big" id="lakeValue">--</span>
+              <span class="unit">ft</span>
+            </div>
+          </div>
+          <div class="trendPill flat" id="lakeTrend">• 0.00 ft</div>
+        </div>
+
+        <!-- Grid stats -->
+        <div class="grid">
+          <div class="stat">
+            <div class="k">Tailwater</div>
+            <div class="v"><span id="tailValue">--</span> <span class="unit">ft</span></div>
+            <div class="sub">
+              <span>Trend</span>
+              <span id="tailTrendText">• 0.00 ft</span>
+            </div>
+          </div>
+
+          <div class="stat">
+            <div class="k">Last update</div>
+            <div class="v" id="lastUpdate">--</div>
+            <div class="sub">
+              <span>Prev</span>
+              <span id="prevUpdate">--</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Weather -->
+        <div class="weather">
+          <div class="wxLeft">
+            <div class="wxTop">
+              <div class="wxIcon" id="wxIcon" aria-hidden="true">⛅</div>
+              <div class="wxTemp"><span id="temp">--</span>°F</div>
+            </div>
+            <div class="wxSummary" id="wxSummary">--</div>
+          </div>
+        </div>
+
+        <div class="footer">
+          <span>Source: <a href="https://cwms-data.usace.army.mil/cwms-data/swagger-ui.html" target="_blank" rel="noopener">USACE CWMS</a></span>
+          <span>Weather: NWS</span>
+        </div>
+      </div>
+
+      <div class="state" id="state">Loading data…</div>
+    </div>
+  </div>
+
+  <script>
+    function trend(delta) {
+      const eps = 0.001;
+      if (delta > eps) return { cls: "up", sym: "▲", word: "up" };
+      if (delta < -eps) return { cls: "down", sym: "▼", word: "down" };
+      return { cls: "flat", sym: "•", word: "flat" };
+    }
+
+    function fmtDelta(delta) {
+      const sign = delta > 0 ? "+" : "";
+      return `${sign}${delta.toFixed(2)} ft`;
+    }
+
+    function weatherIcon(summary) {
+      const s = (summary || "").toLowerCase();
+      if (s.includes("thunder")) return "⛈️";
+      if (s.includes("snow") || s.includes("sleet")) return "🌨️";
+      if (s.includes("rain") || s.includes("showers")) return "🌧️";
+      if (s.includes("fog") || s.includes("haze")) return "🌫️";
+      if (s.includes("clear") || s.includes("sunny")) return "☀️";
+      if (s.includes("cloud")) return "☁️";
+      return "⛅";
+    }
+
+    async function load() {
+      const state = document.getElementById("state");
+      const content = document.getElementById("content");
+      const badgeText = document.getElementById("badgeText");
+
+      try {
+        const r = await fetch("/api/status", { cache: "no-store" });
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        const d = await r.json();
+
+        // As-of time
+        document.getElementById("asof").textContent = `As of ${d.lakeLevelFt.current.timeCentral}`;
+
+        // Lake
+        document.getElementById("lakeValue").textContent = d.lakeLevelFt.current.value.toFixed(2);
+        const lt = trend(d.lakeLevelFt.delta);
+        const lakeTrend = document.getElementById("lakeTrend");
+        lakeTrend.className = `trendPill ${lt.cls}`;
+        lakeTrend.textContent = `${lt.sym} ${fmtDelta(d.lakeLevelFt.delta)}`;
+        lakeTrend.setAttribute("aria-label", `Lake level trend ${lt.word}, change ${fmtDelta(d.lakeLevelFt.delta)}`);
+
+        // Tailwater
+        document.getElementById("tailValue").textContent = d.tailwaterFt.current.value.toFixed(2);
+        const tt = trend(d.tailwaterFt.delta);
+        document.getElementById("tailTrendText").textContent = `${tt.sym} ${fmtDelta(d.tailwaterFt.delta)}`;
+
+        // Times in the “Last update” stat
+        document.getElementById("lastUpdate").textContent = d.tailwaterFt.current.timeCentral.split(" ")[1]; // HH:mm
+        document.getElementById("prevUpdate").textContent = d.tailwaterFt.previous.timeCentral.split(" ")[1];
+
+        // Weather
+        document.getElementById("temp").textContent = Math.round(d.weather.temperatureF);
+        document.getElementById("wxSummary").textContent = d.weather.summary;
+        document.getElementById("wxIcon").textContent = weatherIcon(d.weather.summary);
+
+        // Show
+        state.hidden = true;
+        content.hidden = false;
+        badgeText.textContent = "Live";
+      } catch (e) {
+        badgeText.textContent = "Error";
+        state.textContent = "Failed to load data.";
+      }
+    }
+
+    load();
+  </script>
+</body>
+</html>
