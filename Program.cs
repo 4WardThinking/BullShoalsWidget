@@ -42,6 +42,7 @@ var app = builder.Build();
 app.UseCors();
 app.UseDefaultFiles();
 app.UseStaticFiles();
+app.MapGet("/", () => Results.Redirect("/widget.html"));
 
 app.MapGet("/api/status", async (WidgetService svc) =>
 {
