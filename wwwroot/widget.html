@@ -10,7 +10,7 @@
       --card: rgba(255,255,255,.08);
       --border: rgba(255,255,255,.14);
       --text: rgba(255,255,255,.92);
-      --muted: rgba(255,255,255,.65);
+      --muted: .72;
       --muted2: rgba(255,255,255,.45);
 
       --up: #22c55e;
@@ -24,10 +24,29 @@
     /* Transparent body so it can sit on any site background */
     body{
       margin:0;
-      background: transparent;
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       color: var(--text);
+
+      /* Standalone readability */
+      min-height: 100vh;
+      display: grid;
+      place-items: start center;
+      padding: 18px;
+
+      /* A subtle background so glass is readable when viewed directly */
+      background:
+        radial-gradient(1200px 600px at 20% 10%, rgba(56,189,248,.22), transparent 60%),
+        radial-gradient(900px 500px at 80% 0%, rgba(34,197,94,.14), transparent 55%),
+        linear-gradient(180deg, #070b14, #0b1220);
     }
+
+    body.embed {
+      background: transparent;
+      padding: 0;
+      min-height: auto;
+      place-items: unset;
+    }
+    body.embed .wrap { padding: 0; }
 
     .wrap{
       width: 100%;
@@ -40,7 +59,7 @@
       position: relative;
       border-radius: 18px;
       background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
-      border: 1px solid var(--border);
+      border: 1px solid rgba(255,255,255,.18);
       box-shadow: var(--shadow);
       overflow: hidden;
     }
@@ -127,6 +146,7 @@
       font-weight: 900;
       letter-spacing: -0.8px;
       line-height: 1;
+      text-shadow: 0 8px 24px rgba(0,0,0,.35);
     }
 
     .unit{
@@ -415,6 +435,9 @@
         state.textContent = "Failed to load data.";
       }
     }
+
+    const params = new URLSearchParams(location.search);
+    if (params.get("embed") === "1") document.body.classList.add("embed");
 
     load();
   </script>
