@@ -36,7 +36,7 @@ builder.Services.AddCors(o =>
         .AllowAnyHeader()
         .AllowAnyMethod());
 });
-
+tst
 var app = builder.Build();
 
 app.UseCors();
