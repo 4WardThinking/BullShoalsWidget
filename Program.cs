@@ -57,7 +57,14 @@ record Trend(TrendPoint Current, TrendPoint Previous)
     public double Delta => Math.Round(Current.Value - Previous.Value, 2);
 }
 
-record WeatherNow(string Summary, double TemperatureF);
+record WeatherNow(
+    string Summary,
+    double TemperatureF,
+    double? ProbabilityOfPrecipPct,
+    string? WindDirection,
+    double? WindSpeedMph,
+    double? RelativeHumidityPct
+);
 
 record WidgetStatus(
     Trend LakeLevelFt,
@@ -192,6 +199,33 @@ sealed class CwmsClient(HttpClient http)
 
 sealed class NwsClient(HttpClient http)
 {
+    private static double? ParseFirstNumber(string s)
+    {
+        // Extract first number in strings like "5 mph" or "10 to 15 mph"
+        var digits = new string(s.TakeWhile(c => !char.IsDigit(c)).ToArray());
+        // (Oops, easier to do a simple scan)
+        double? first = null;
+        var token = "";
+        foreach (var ch in s)
+        {
+            if (char.IsDigit(ch) || ch == '.')
+                token += ch;
+            else if (token.Length > 0)
+            {
+                if (double.TryParse(token, NumberStyles.Float, CultureInfo.InvariantCulture, out var n))
+                {
+                    first = n;
+                    break;
+                }
+                token = "";
+            }
+        }
+        if (first is null && token.Length > 0 && double.TryParse(token, NumberStyles.Float, CultureInfo.InvariantCulture, out var last))
+            first = last;
+
+        return first;
+    }
+
     public async Task<WeatherNow> GetCurrentAsync(double lat, double lon)
     {
         using var pResp = await http.GetAsync($"points/{lat},{lon}");
@@ -218,9 +252,35 @@ sealed class NwsClient(HttpClient http)
             .GetProperty("properties")
             .GetProperty("periods")[0];
 
-        var tempF = first.GetProperty("temperature").GetDouble();
-        var summary = first.GetProperty("shortForecast").GetString() ?? "Forecast";
+        double tempF = first.GetProperty("temperature").GetDouble();
+        string summary = first.GetProperty("shortForecast").GetString() ?? "Forecast";
 
-        return new WeatherNow(summary, tempF);
+        string? windDir = first.TryGetProperty("windDirection", out var wd) ? wd.GetString() : null;
+
+        double? windMph = null;
+        if (first.TryGetProperty("windSpeed", out var ws))
+        {
+            // windSpeed is often like "5 mph" or "10 to 15 mph"
+            var s = ws.GetString() ?? "";
+            windMph = ParseFirstNumber(s);
+        }
+
+        double? pop = null;
+        if (first.TryGetProperty("probabilityOfPrecipitation", out var popObj) &&
+            popObj.TryGetProperty("value", out var popVal) &&
+            popVal.ValueKind == JsonValueKind.Number)
+        {
+            pop = popVal.GetDouble();
+        }
+
+        double? rh = null;
+        if (first.TryGetProperty("relativeHumidity", out var rhObj) &&
+            rhObj.TryGetProperty("value", out var rhVal) &&
+            rhVal.ValueKind == JsonValueKind.Number)
+        {
+            rh = rhVal.GetDouble();
+        }
+
+        return new WeatherNow(summary, tempF, pop, windDir, windMph, rh);
     }
 }

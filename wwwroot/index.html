@@ -221,8 +221,9 @@
       border-radius: 14px;
       padding: 10px 10px 9px;
       display:flex;
-      justify-content: space-between;
-      align-items:flex-start;
+      justify-content: center;
+      align-items:center;
+      text-align: center;
       gap: 12px;
     }
 
@@ -233,11 +234,12 @@
     .wxTop{
       display:flex;
       align-items:center;
+      justify-content: center;
       gap: 10px;
     }
 
     .wxIcon{
-      font-size: 18px;
+      font-size: 22px;
       line-height: 1;
       filter: drop-shadow(0 6px 12px rgba(0,0,0,.35));
     }
@@ -354,12 +356,14 @@
               <div class="wxTemp"><span id="temp">--</span>°F</div>
             </div>
             <div class="wxSummary" id="wxSummary">--</div>
+            <div class="wxSummary" id="wxDetails" style="opacity:.85">--</div>
           </div>
         </div>
 
         <div class="footer">
           <span>Source: <a href="https://cwms-data.usace.army.mil/cwms-data/swagger-ui.html" target="_blank" rel="noopener">USACE CWMS</a></span>
           <span>Weather: NWS</span>
+          <span>Built by: <a href="https://github.com/4WardThinking" target="_blank" rel="noopener">4WardThinking</a></span>
         </div>
       </div>
 
@@ -425,6 +429,20 @@
         document.getElementById("temp").textContent = Math.round(d.weather.temperatureF);
         document.getElementById("wxSummary").textContent = d.weather.summary;
         document.getElementById("wxIcon").textContent = weatherIcon(d.weather.summary);
+        const parts = [];
+
+        if (d.weather.relativeHumidityPct != null)
+          parts.push(`Humidity ${Math.round(d.weather.relativeHumidityPct)}%`);
+
+        if (d.weather.windDirection && d.weather.windSpeedMph != null)
+          parts.push(`Wind ${d.weather.windDirection} ${Math.round(d.weather.windSpeedMph)} mph`);
+        else if (d.weather.windSpeedMph != null)
+          parts.push(`Wind ${Math.round(d.weather.windSpeedMph)} mph`);
+
+        if (d.weather.probabilityOfPrecipPct != null)
+          parts.push(`Rain ${Math.round(d.weather.probabilityOfPrecipPct)}%`);
+
+        document.getElementById("wxDetails").textContent = parts.length ? parts.join(" • ") : "";
 
         // Show
         state.hidden = true;
