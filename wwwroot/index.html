@@ -21,6 +21,70 @@
       --shadow2: 0 8px 24px rgba(0,0,0,.35);
     }
 
+    /* FourWardCast theme (warm/cream background friendly) */
+    body.fwc{
+      /* Let the host background show through (your cream page) */
+      background: transparent;
+    }
+
+    body.fwc .card{
+      background: linear-gradient(
+        180deg,
+        rgba(255,255,255,.72),
+        rgba(255,255,255,.58)
+      );
+      border: 1px solid rgba(80,86,53,.28); /* #505635 */
+      box-shadow: 0 18px 60px rgba(80,86,53,.22);
+    }
+
+    body.fwc .card:before{
+      background: radial-gradient(circle at 30% 30%, rgba(103,201,195,.28), transparent 60%); /* #67c9c3 */
+    }
+
+    body.fwc{
+      --text: rgba(81,69,38,.96);      /* #514526 */
+      --muted: rgba(80,86,53,.78);     /* #505635 */
+      --muted2: rgba(80,86,53,.60);    /* #505635 */
+      --border: rgba(80,86,53,.22);    /* #505635 */
+
+      /* Trend colors matched to your swatch */
+      --up: #67c9c3;    /* lake teal */
+      --down: #ff522b;  /* sunset red */
+      --flat: #efae2b;  /* warm gold */
+
+      --shadow: 0 18px 60px rgba(80,86,53,.22);
+      --shadow2: 0 8px 24px rgba(80,86,53,.16);
+    }
+
+    /* Pills + tiles in theme */
+    body.fwc .badge,
+    body.fwc .stat,
+    body.fwc .weather{
+      background: rgba(255,255,255,.52);
+      border: 1px solid rgba(80,86,53,.22);
+    }
+
+    /* Keep the live dot green-ish but more “brand” */
+    body.fwc .dot{
+      background: #67c9c3;
+      box-shadow: 0 0 0 3px rgba(103,201,195,.20);
+    }
+
+    /* Improve pill readability on light bg */
+    body.fwc .trendPill{
+      background: rgba(255,255,255,.50);
+    }
+
+    /* Give the big number a lighter shadow for light theme */
+    body.fwc .big{
+      text-shadow: 0 10px 22px rgba(80,86,53,.20);
+    }
+
+    /* Weather icon shadow should be lighter */
+    body.fwc .wxIcon{
+      filter: drop-shadow(0 4px 10px rgba(80,86,53,.20));
+    }
+
     /* Transparent body */
     body{
       margin:0;
@@ -446,6 +510,11 @@
 
     const params = new URLSearchParams(location.search);
     if (params.get("embed") === "1") document.body.classList.add("embed");
+
+    const theme = params.get("theme");
+    if (theme === "fwc" || theme === "fourwardcast") {
+      document.body.classList.add("fwc");
+    }
 
     load();
   </script>
