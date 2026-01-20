@@ -107,39 +107,7 @@
       padding: 0;
       min-height: auto;
       place-items: unset;
-      margin: 0;
-      overflow: hidden;
     }
-
-    body.embed,
-    body.embed * {
-      scrollbar-width: none;
-    }
-
-    body.embed.scale {
-      padding: 0;
-      height: 100%;
-      display: grid;
-      place-items: center;
-    }
-
-    body.embed.scale .wrap {
-      max-width: none;     /* remove 420px cap */
-      width: 100%;
-      height: 100%;
-      padding: 0;
-      display: grid;
-      place-items: center;
-    }
-
-    body.embed.scale .card {
-      width: min(100%, 860px);  /* grows on big screens but won’t get absurd */
-      max-height: 100%;
-      height: auto;
-      overflow: hidden;
-      border-radius: 18px;
-    }
-
     body.embed .wrap { padding: 0; }
 
     .wrap{
@@ -570,10 +538,11 @@
       }
     }
 
+    const params = new URLSearchParams(location.search);
     if (params.get("embed") === "1") document.body.classList.add("embed");
 
     const mode = params.get("mode");
-    if (mode === "scale") document.body.classList.add("scale");
+    if (mode === "fill") document.body.classList.add("fill");
 
     const theme = params.get("theme");
     if (theme === "fwc" || theme === "fourwardcast") {
