@@ -117,6 +117,36 @@
       box-sizing: border-box;
     }
 
+    /* Allow the widget to fill the parent iframe when requested */
+    html, body { height: 100%; }
+
+    body.embed.fill {
+      height: 100%;
+      min-height: 100%;
+      padding: 0;
+      display: block;
+    }
+
+    body.embed.fill .wrap {
+      max-width: none;     /* <-- removes 420px cap */
+      height: 100%;
+      padding: 0;
+      display: block;
+    }
+
+    body.embed.fill .card {
+      height: 100%;
+      width: 100%;
+      border-radius: 18px; /* keep your rounded look */
+    }
+
+    /* Optional: make internal layout adapt better when tall */
+    body.embed.fill .content {
+      height: calc(100% - 58px); /* top header area */
+      display: flex;
+      flex-direction: column;
+    }
+
     .card{
       position: relative;
       border-radius: 18px;
@@ -510,6 +540,9 @@
 
     const params = new URLSearchParams(location.search);
     if (params.get("embed") === "1") document.body.classList.add("embed");
+
+    const mode = params.get("mode");
+    if (mode === "fill") document.body.classList.add("fill");
 
     const theme = params.get("theme");
     if (theme === "fwc" || theme === "fourwardcast") {
